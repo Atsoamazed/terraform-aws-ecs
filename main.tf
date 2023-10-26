@@ -31,8 +31,8 @@ resource "aws_ecs_service" "app_service" {
   cluster         = var.ecs_cluster_id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = var.launch_type
-  desired_count   = var.desired_count # or another appropriate default
-  platform_version = var.platform_version "1.4.0"
+  desired_count   = var.desired_count
+  platform_version = var.platform_version
 
   network_configuration {
     subnets          = var.subnets
