@@ -28,7 +28,7 @@ data "template_file" "task-definitions" {
 # ECS Service
 resource "aws_ecs_service" "app_service" {
   name            = var.app_name
-  cluster         = var.ecs_cluster_id
+  cluster         = var.ecs_cluster_name
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = var.launch_type
   desired_count   = var.desired_count
