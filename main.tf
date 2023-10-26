@@ -1,65 +1,72 @@
-resource "aws_ecs_task_definition" "example" {
+
+
+# ECS Task Definition
+resource "aws_ecs_task_definition" "app" {
   family                   = var.app_name
-  container_definitions    = data.template_file.example.rendered
-  requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  memory                   = var.task_memory
+  requires_compatibilities = [var.launch_type]
+  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   cpu                      = var.task_cpu
-  execution_role_arn       = aws_iam_role.example_execution_role.arn
+  memory                   = var.task_memory
+  container_definitions = data.template_file.task-definitions.rendered
 }
 
-data "template_file" "example" {
-  template = file("${path.module}/task-definition.json")
-
+data "template_file" "task-definitions" {
+  template = file("${path.module}/task-definitions/${var.app_name}.json")
   vars = {
     name           = var.app_name
-    secret_arn     = var.example_secret_arn
-    aws_logs_group = aws_cloudwatch_log_group.example.name
-    region         = var.aws_region
-    dd_api_key_arn = data.aws_ssm_parameter.datadog_api_key.arn
+    aws_logs_group = aws_cloudwatch_log_group.${var.app_name}.name,
+    region         = var.aws_region,
   }
 }
 
-resource "aws_cloudwatch_log_group" "example" {
-  name = "${var.app_name}-logs"
-}
-
-resource "aws_ecs_service" "example_service" {
-  name             = var.app_name
-  cluster          = var.cluster_name
-  task_definition  = aws_ecs_task_definition.example.arn
-  launch_type      = "FARGATE"
-  desired_count    = var.desired_count
-  platform_version = "1.4.0"
+# ECS Service
+resource "aws_ecs_service" "app_service" {
+  name            = var.app_name
+  cluster         = var.ecs_cluster_id
+  task_definition = aws_ecs_task_definition.app.arn
+  launch_type     = var.launch_type
+  desired_count   = 1 # or another appropriate default
 
   network_configuration {
     subnets          = var.subnets
     assign_public_ip = var.assign_public_ip
-    security_groups  = [aws_security_group.example_sg.id]
+  }
+
+  load_balancer {
+    target_group_arn = var.load_balancer_target_group_arn
+    container_name   = var.app_name
+    container_port   = var.container_port
+  }
+
+  # Conditional creation based on whether Route53 settings are provided
+  service_registries {
+    registry_arn = var.route53_record_name != null && var.route53_zone_id != null ? aws_service_discovery_service.sd_service[0].arn : null
+  }
+
+  depends_on = [
+    aws_iam_role.ecs_execution_role,
+    aws_iam_role_policy_attachment.ecs_task_execution_role_policy
+  ]
+}
+
+# Conditional creation of service discovery resources
+resource "aws_service_discovery_service" "sd_service" {
+  count = var.route53_record_name != null && var.route53_zone_id != null ? 1 : 0
+
+  name = var.app_name
+
+  dns_config {
+    namespace_id = var.route53_zone_id
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
   }
 }
 
-resource "aws_security_group" "example_sg" {
-  name        = "${var.app_name}-sg"
-  description = "Security group for ${var.app_name}"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port       = ""
-    to_port         = ""
-    protocol        = "tcp"
-    security_groups = [var.traefik_security_group_id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.app_name}-sg"
-  }
-}
 
