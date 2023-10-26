@@ -12,29 +12,7 @@ AWS provider
 - Optional integration with AWS Secrets Manager for secure credential storage.
 - CloudWatch Logs integration for easy monitoring and logging.
 
-### Usage
-Include this module in your Terraform configuration with the following steps:
-
-Add the module to your Terraform configuration:
-
-```
-module "example" {
-  source                    = "path/to/this/module"
-  app_name                  = "example-app"
-  aws_region                = "us-east-1"
-  vpc_id                    = var.vpc_id
-  cluster_name              = var.cluster_name
-  subnets                   = [var.subnets]
-  assign_public_ip          = false
-  traefik_security_group_id = var.security_groupid
-  # Optional: secret_arn can be provided if necessary
-  # secret_arn = var.secret_arn
-}
-
-```
-Run `terraform init` and `terraform apply` to deploy the service.
-### Variables
-## Inputs
+### Variables Inputs
 
 The following are the input variables for the module:
 
@@ -63,5 +41,26 @@ The following are the input variables for the module:
 |-----------------------|---------------------------------------------------|
 | `service_url`         | The URL of your service.                          |
 | `cloudwatch_log_group`| The name of the CloudWatch Log Group where you can find your logs. |
+
+### Usage
+Include this module in your Terraform configuration with the following steps:
+
+Add the module to your Terraform configuration:
+
+```
+module "example" {
+  source                    = "path/to/this/module"
+  app_name                  = "example-app"
+  aws_region                = "us-east-1"
+  vpc_id                    = var.vpc_id
+  cluster_name              = var.cluster_name
+  subnets                   = [var.subnets]
+  assign_public_ip          = false
+  traefik_security_group_id = var.security_groupid
+  # Optional: secret_arn can be provided if necessary
+  # secret_arn = var.secret_arn
+}
+```
+Run `terraform init` and `terraform apply` to deploy the service.
 
 
