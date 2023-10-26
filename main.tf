@@ -11,6 +11,11 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = data.template_file.task-definitions.rendered
 }
 
+resource "aws_cloudwatch_log_group" "app_logs" {
+  name = "${var.app_name}-logs"
+}
+
+
 data "template_file" "task-definitions" {
   template = file("${path.module}/task-definitions/${var.app_name}.json")
   vars = {
@@ -26,7 +31,8 @@ resource "aws_ecs_service" "app_service" {
   cluster         = var.ecs_cluster_id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = var.launch_type
-  desired_count   = 1 # or another appropriate default
+  desired_count   = var.desired_count # or another appropriate default
+  platform_version = var.platform_version "1.4.0"
 
   network_configuration {
     subnets          = var.subnets
