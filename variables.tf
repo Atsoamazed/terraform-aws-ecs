@@ -8,7 +8,7 @@ variable "aws_region" {
   type        = string
 }
 
-variable "example_secret_arn" {
+variable "secret_arn" {
   description = "ARN of the example secret"
   type        = string
 }
@@ -54,6 +54,12 @@ variable "desired_count" {
   description = "The number of instances of the task definition to place and keep running"
   type        = number
   default     = 1
+}
+
+variable "platform_version" {
+description   = "The platform version for fargate"
+type          = string
+default       = "1.40.0"
 }
 
 
