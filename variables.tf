@@ -3,9 +3,21 @@ variable "app_name" {
   type        = string
 }
 
-variable "aws_region" {
-  description = "AWS region for the deployment"
+variable "account_name" {
+  description = "The AWS account that hosts the resources in this workspace"
   type        = string
+  default     = ""
+}
+
+variable "aws_region" {
+  description = "The AWS region that hosts the resources in this workspace"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "domain_name" {
+  type    = string
+  default = "service-onepassword-scim-bridge.corp-it.casper.cool"
 }
 
 variable "secret_arn" {
