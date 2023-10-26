@@ -1,3 +1,4 @@
+## terraform-aws-ecs
 This Terraform module deploys a service on AWS ECS (Elastic Container Service). The module sets up the necessary resources for a secure and efficient deployment, including the ECS service, task definition, IAM roles, and security groups. It supports the choice between FARGATE and EC2 launch types and optional integration with a load balancer and Route53 for service discovery.
 
 #### Requirements
