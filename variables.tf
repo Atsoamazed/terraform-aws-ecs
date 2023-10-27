@@ -45,9 +45,11 @@ variable "assign_public_ip" {
   type        = bool
 }
 
-variable "traefik_security_group_id" {
-  description = "Security group ID for Traefik"
-  type        = string
+variable "traefik_sgid" {
+  description   = "Security group ID for Traefik"
+  type          = string
+  default       = ""
+
 }
 
 variable "task_memory" {
@@ -87,5 +89,10 @@ variable "create_route53_record" {
 }
 
 
+variable "container_port" {
+  description = "Container port for the ECS security group"
+  type        = number
+  default     = ""
+}
 
 
