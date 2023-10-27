@@ -59,6 +59,26 @@ module "example" {
   # secret_arn = var.secret_arn
 }
 ```
+
+Example creating optional load balancer and route53
+```
+module "my_app_ecs" {
+  source = "./modules/my-ecs-module"  # Path to your module
+
+  app_name             = "my-cool-app"
+  aws_region           = "us-west-2"
+  vpc_id               = var.vpc_id
+  cluster_name         = var.cluster_name
+  subnets              = [var.subnets]
+  assign_public_ip     = true
+  vpc_id               = var.vpc_id
+  cluster_name         = var.cluster_name
+  subnets              = [var.subnets]
+  create_alb           = true
+  create_route53_record = true
+  domain_name          = "myapp.mydomain.com"
+}
+```
 Run `terraform init` and `terraform apply` to deploy the service.
 
 
