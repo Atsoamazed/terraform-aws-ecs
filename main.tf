@@ -18,10 +18,11 @@ resource "aws_cloudwatch_log_group" "app_logs" {
 
 data "template_file" "task-definitions" {
   template = file("${path.module}/task-definitions/${var.app_name}.json")
+
   vars = {
     name           = var.app_name
-    aws_logs_group = aws_cloudwatch_log_group.${var.app_name}.name,
-    region         = var.aws_region,
+    aws_logs_group = aws_cloudwatch_log_group.app_logs.name 
+    region         = var.aws_region
   }
 }
 
