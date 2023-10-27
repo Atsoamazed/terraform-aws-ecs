@@ -92,7 +92,6 @@ variable "create_route53_record" {
 variable "container_port" {
   description = "Container port for the ECS security group"
   type        = number
-  default     = ""
 }
 
 
