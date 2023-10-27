@@ -39,20 +39,13 @@ resource "aws_ecs_service" "app_service" {
     assign_public_ip = var.assign_public_ip
   }
 
-  load_balancer {
-    target_group_arn = var.load_balancer_target_group_arn
-    container_name   = var.app_name
-    container_port   = var.container_port
+  # Conditional load balancer settings
+  dynamic "load_balancer" {
+    for_each = var.create_alb ? [1] : []
+    content {
+      target_group_arn = var.create_alb ? aws_lb_target_group.this[0].arn : null
+      container_name   = var.app_name
+      container_port   = var.container_port
+    }
   }
-
-  # Conditional creation based on whether Route53 settings are provided
-  service_registries {
-    registry_arn = var.route53_record_name != null && var.route53_zone_id != null ? aws_service_discovery_service.sd_service[0].arn : null
-  }
-
-  depends_on = [
-    aws_iam_role.ecs_execution_role,
-    aws_iam_role_policy_attachment.ecs_task_execution_role_policy
-  ]
-}
 
