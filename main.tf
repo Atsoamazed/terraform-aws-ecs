@@ -52,6 +52,7 @@ resource "aws_ecs_service" "app_service" {
 
 
 resource "aws_security_group" "traefik_sg" {
+  count = var.create_alb ? 0 : 1
   name        = "${var.app_name}-traefik-sg"
   description = "Allow access to Traefik for ${var.app_name}"
   vpc_id      = var.vpc_id
