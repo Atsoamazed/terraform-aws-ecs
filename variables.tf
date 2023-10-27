@@ -74,4 +74,18 @@ type          = string
 default       = "1.40.0"
 }
 
+variable "create_alb" {
+  description = "Determines whether an ALB should be created"
+  type        = bool
+  default     = false
+}
+
+variable "create_route53_record" {
+  description = "Determines whether a Route53 record should be created"
+  type        = bool
+  default     = false
+}
+
+
+
 
