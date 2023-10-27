@@ -19,19 +19,20 @@ The following are the input variables for the module:
 | Name                      | Description                                                   | Type          | Default                                     | Required |
 |---------------------------|---------------------------------------------------------------|---------------|---------------------------------------------|:--------:|
 | `app_name`                | Application name for the ECS task                             | `string`      | n/a                                         |    yes   |
-| `account_name`            | The AWS account that hosts the resources in this workspace    | `string`      | `""`                                        |    no    |
-| `aws_region`              | The AWS region that hosts the resources in this workspace     | `string`      | `"us-east-1"`                               |    no    |
-| `domain_name`             | The domain name used for the service                          | `string`      | `` |    no    |
-| `secret_arn`              | ARN of the  secret                                     | `string`      | n/a                                         |    yes   |
+| `account_name`            | The AWS account that hosts the resources in this workspace    | `string`      | `""`                                        |    yes    |
+| `aws_region`              | The AWS region that hosts the resources in this workspace     | `string`      | `"us-east-1"`                               |    yes    |
+| `domain_name`             | The domain name used for the service                          | `string`      | ``                                          |    no    |
+| `secret_arn`              | ARN of the  secret                                           | `string`      | n/a                                         |    yes   |
 | `vpc_id`                  | ID of the VPC where resources are deployed                    | `string`      | n/a                                         |    yes   |
 | `cluster_name`            | ECS cluster name where the service will run                   | `string`      | n/a                                         |    yes   |
 | `subnets`                 | Subnets for the task network configuration                    | `list(string)`| n/a                                         |    yes   |
 | `assign_public_ip`        | Whether to assign a public IP address to tasks                | `bool`        | n/a                                         |    yes   |
-| `traefik_security_group_id`| Security group ID for Traefik                                | `string`      | n/a                                         |    yes   |
+| `traefik_sgid`            | Security group ID for Traefik                                | `string`      | n/a                                         |    yes   |
 | `task_memory`             | Memory for the task definition                                | `number`      | `1024`                                      |    no    |
 | `task_cpu`                | CPU for the task definition                                   | `number`      | `512`                                       |    no    |
 | `desired_count`           | The number of instances of the task definition to place and keep running | `number` | `1`                                     |    no    |
-| `platform_version`        | The platform version for Fargate                              | `string`      | `"1.40.0"`                                  |    no    |
+| `container_port`          | The container port for on ECS                                  | `number`      | ``                                  |    no    |
+| `platform_version`         | The platform version for Fargate                              | `string`      | `"1.40.0"`                                  |    no    |
 
 
 
