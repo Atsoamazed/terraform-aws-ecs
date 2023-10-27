@@ -17,7 +17,7 @@ variable "aws_region" {
 
 variable "domain_name" {
   type    = string
-  default = "service-onepassword-scim-bridge.corp-it.casper.cool"
+  default = ""
 }
 
 variable "secret_arn" {
