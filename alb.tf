@@ -1,12 +1,14 @@
 resource "aws_alb" "this" {
-  name               = var.app_name
+  count = var.create_alb ? 1 : 0
+  name               = "${var.app_name}-alb"
   load_balancer_type = "application"
   subnets            = var.subnets
-  security_groups    = [aws_security_group.alb_sg.id]
+  security_groups    = var.create_alb ? [aws_security_group.alb_sg[0].id] : [] 
 }
 
 resource "aws_security_group" "alb_sg" {
-  name        = "${var.app_name}-alb"
+  count = var.create_alb ? 1 : 0
+  name        = "${var.app_name}-alb-sg"
   description = "Security group for the Application Load Balancer"
   vpc_id      = var.vpc_id
 
@@ -33,15 +35,16 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_security_group" "service_sg" {
-  name        = "${var.app_name}-service"
-  description = "Security group for the service in ECS"
+  count = var.create_alb ? 1 : 0
+  name        = "${var.app_name}-service-sg-alb"
+  description = "Security group for the service-lb in ECS"
   vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = [aws_security_group.alb_sg.id]
+    security_groups = [aws_security_group.alb_sg[0].id]
   }
 
   egress {
@@ -53,7 +56,8 @@ resource "aws_security_group" "service_sg" {
 }
 
 resource "aws_lb_target_group" "this" {
-  name     = var.target_group_name
+  count = var.create_alb ? 1 : 0
+  name     = "${var.app_name}-alb-tg"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -70,7 +74,8 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_alb.this.arn
+  count = var.create_alb ? 1 : 0
+  load_balancer_arn = aws_alb.this[0].arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
@@ -78,11 +83,12 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.this.arn
+    target_group_arn = aws_lb_target_group.this[0].arn
   }
 }
 
 resource "aws_acm_certificate" "this" {
+  count = var.create_route53_record ? 1 : 0
   domain_name       = var.domain_name
   validation_method = "DNS"
   lifecycle {
@@ -91,8 +97,9 @@ resource "aws_acm_certificate" "this" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
+  count = var.create_route53_record ? 1 : 0
+  for_each = var.create_route53_record && var.create_alb ? { 
+    for dvo in aws_acm_certificate.this[0].domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -108,14 +115,14 @@ resource "aws_route53_record" "cert_validation" {
 }
 
 resource "aws_route53_record" "service" {
+  count = var.create_route53_record ? 1 : 0
   zone_id = var.route53_zone_id
   name    = var.domain_name
   type    = "A"
 
   alias {
-    name                   = aws_alb.this.dns_name
-    zone_id                = aws_alb.this.zone_id
+    name                   = var.create_alb ? aws_alb.this[0].dns_name : null 
+    zone_id                = var.create_alb ? aws_alb.this[0].zone_id : null 
     evaluate_target_health = false
   }
 }
-
