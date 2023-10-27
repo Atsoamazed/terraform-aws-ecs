@@ -62,7 +62,7 @@ resource "aws_security_group" "traefik_sg" {
     from_port       = var.container_port
     to_port         = var.container_port
     protocol        = "tcp"
-    security_groups = ["${var.security_group_id}"]
+    security_groups = ["${var.traefik_sgid}"]
   }
   egress {
     from_port   = 0
