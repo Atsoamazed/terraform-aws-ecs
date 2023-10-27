@@ -83,6 +83,6 @@ module "my_app_ecs" {
   platform_version       = var.platform_version
 }
 ```
-Run `terraform init` and `terraform apply` to deploy the service.
+Run `terraform init`, `terraform plan` and `terraform apply` to deploy the service.
 
 
