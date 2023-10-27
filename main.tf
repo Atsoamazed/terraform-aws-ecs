@@ -56,23 +56,3 @@ resource "aws_ecs_service" "app_service" {
   ]
 }
 
-# Conditional creation of service discovery resources
-resource "aws_service_discovery_service" "sd_service" {
-  count = var.route53_record_name != null && var.route53_zone_id != null ? 1 : 0
-
-  name = var.app_name
-
-  dns_config {
-    namespace_id = var.route53_zone_id
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  health_check_custom_config {
-    failure_threshold = 1
-  }
-}
-
-
