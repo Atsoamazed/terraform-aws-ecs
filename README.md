@@ -47,36 +47,36 @@ The following are the input variables for the module:
 
 ```
 module "example" {
-  source                    = "path/to/this/module"
-  app_name                  = "example-app"
-  aws_region                = "us-east-1"
-  vpc_id                    = var.vpc_id
-  cluster_name              = var.cluster_name
-  subnets                   = [var.subnets]
-  assign_public_ip          = false
-  traefik_security_group_id = var.security_groupid
-  # Optional: secret_arn can be provided if necessary
-  # secret_arn = var.secret_arn
+  source                      = "path/to/this/module"
+  app_name                    = "example-app"
+  aws_region                  = "us-east-1"
+  vpc_id                      = vpc-0e4abcd1234example"
+  cluster_name                = "my-ecs-cluster"
+  subnets                     =  ["subnet-01234abexamplef", "subnet-0a1b2c3d4e5example"]
+  assign_public_ip            = false
+  traefik_security_group_id   = var.security_group
+  secret_arn                  = var.secret_arn # used if you need to pass secret token
 }
 ```
 
-Example creating optional load balancer and route53
+Example of creating an optional load balancer and route53
 ```
 module "my_app_ecs" {
   source = "./modules/my-ecs-module"  # Path to your module
 
-  app_name             = "my-cool-app"
-  aws_region           = "us-west-2"
-  vpc_id               = var.vpc_id
-  cluster_name         = var.cluster_name
-  subnets              = [var.subnets]
-  assign_public_ip     = true
-  vpc_id               = var.vpc_id
-  cluster_name         = var.cluster_name
-  subnets              = [var.subnets]
-  create_alb           = true
-  create_route53_record = true
-  domain_name          = "myapp.mydomain.com"
+  app_name               = var.app_name
+  aws_region             = var.aws_region
+  vpc_id                 = var.vpc_id
+  cluster_name           = var.cluster_name
+  subnets                = [var.subnets]
+  assign_public_ip       = true
+  create_alb             = true
+  create_route53_record  = true
+  domain_name            = var.domain_name
+  task_memory            = var.task_memory
+  task_cpu               = var.task_cpu
+  desired_count          = var.desired_count
+  platform_version       = var.platform_version
 }
 ```
 Run `terraform init` and `terraform apply` to deploy the service.
